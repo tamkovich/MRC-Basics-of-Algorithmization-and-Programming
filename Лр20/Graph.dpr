@@ -1,0 +1,81 @@
+// стр. 70
+// ЛАБОРАТОРНАЯ РАБОТА 14(20)
+
+// Алгоритмы на графах
+// Вариант 16
+
+// 1.	Начертите неориентированный связный граф, содержащий n вершин и m ребер.
+// 2.	В текстовом файле подготовьте матрицу инциденций данного графа.
+// 3.	Напишите процедуру ввода данной матрицы.
+// 4.	Напишите процедуру вывода данной матрицы на экран.
+// 5.	Напишите процедуру, находящую количество нечетных вершин, т.е. вершин, из которых выходит нечетное количество ребер.
+// 6.	Напишите процедуру вывода номеров этих вершин и число ребер, выходящих из каждой такой вершины,
+//на экран.
+
+
+program Graph;
+
+{$APPTYPE CONSOLE}
+
+uses
+  SysUtils;
+
+Var
+  a:array[1..100,1..100]of byte;
+  i,j,n,m,kol:integer;
+  b:array[1..10]of integer;
+
+{ ввод }
+Procedure Vvod(filename:string);
+Var
+  f:textfile;
+Begin
+  assignfile(f,filename); reset(f);
+  read(f,n,m);
+  for i:=1 to n do
+    for j:=1 to m do
+      read(f,a[i,j]);
+  closefile(f);
+End;
+
+{ вывод }
+Procedure Vivod;
+Begin
+  for i:=1 to n do
+  begin
+    for j:=1 to m do
+      write(a[i,j],' ');
+    writeln;
+  end;
+End;
+
+{ находим нечетные вершины }
+// находим все ребра для каждой вершины
+Procedure FindNech;
+Begin
+  for i:=1 to n do
+  begin
+    b[i]:=0;
+    for j:=1 to m do
+      if a[i,j]=1 then
+        inc(b[i]);
+  end;
+
+End;
+
+{ вывод нечетных вершин }
+Procedure VivodNech;
+Begin
+  for i:=1 to n do
+    if b[i] mod 2 > 0 then     // если количество ребер нечетное, то выводим на экран
+                               // пару ребро-значение 
+      writeln(i,' == ', b[i]);
+End;
+
+begin
+  Vvod('graph.txt'); { ввод }
+  Vivod;             { вывод }
+  FindNech;          { находим нечетные вершины }
+  VivodNech;         { вывод нечетных вершин }
+  readln;
+end.

@@ -1,0 +1,170 @@
+//ЛАБОРАТОРНАЯ РАБОТА 18
+
+//Динамические структуры данных.
+//Процедуры и функции для работы
+//с динамическими структурами
+
+//  27. Дан упорядоченный линейный по неубыванию односвязный список.
+// Сформируйте второй упорядоченный список,в который входили бы по
+// одному разу все повторяющиеся элементы первого списка.
+//
+//Подготовил: Тамкович Д.И.,гр.62492
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons;
+
+type
+  TForm1 = class(TForm)
+    BitBtn1: TBitBtn;
+    Button1: TButton;
+    OpenDialog1: TOpenDialog;
+    Edit1: TEdit;
+    Button2: TButton;
+    Edit2: TEdit;
+    Button3: TButton;
+    Edit3: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Memo: TMemo;
+    Memo1: TMemo;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+  uk=^dspis;
+  dspis=record
+    inf :integer;
+    next: uk;
+  end;
+
+var
+  Form1: TForm1;
+  head,list,SecH,SecL: uk;
+
+implementation
+
+{$R *.dfm}
+Procedure printd;
+Var
+  vsp: uk;
+  s: string;
+begin
+  s:='';
+  vsp:=head^.next;
+  while vsp<>Nil do
+  Begin
+    s:=s+inttostr(vsp^.inf)+' ';
+    vsp:=vsp^.next;
+  End;
+  Form1.Memo.Lines.Add(s);
+end;
+
+Procedure printd2;
+Var
+  vsp: uk;
+  s: string;
+begin
+  s:='';
+  vsp:=SecH^.next;
+  while vsp<>Nil do
+  Begin
+    s:=s+inttostr(vsp^.inf)+' ';
+    vsp:=vsp^.next;
+  End;
+  if s<>'' then
+   Form1.Memo1.Lines.Add(s)
+   else
+   Form1.Memo1.Lines.Add('Этот список пустой');
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+//ввод списка из файла
+Var
+  f:textfile;
+  x:integer;
+begin
+  Edit1.Text:='. . .';
+  Edit2.Text:='. . .';
+  Edit3.Text:='. . .';
+  if OpenDialog1.Execute then
+  begin
+    assignfile(f,OpenDialog1.FileName);
+    reset(f);
+    head:=nil;
+    new(list);
+    list^.next:=nil;
+    head:=list;
+    while not eoln(F) do
+    begin
+      read(f,x);
+      New(list^.Next);
+      list:=list^.Next;
+      list^.Next:=Nil;
+      list^.Inf:=x;
+    end;
+    closefile(F);
+    Edit1.Text:='Список 1 получен';
+    printd;
+  end;
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+// ОБРАБОТАТЬ - создание списка без повторений
+Var
+  vsp:uk;
+begin
+  vsp:=head^.next;
+  SecH:=nil;
+  new(SecL);
+  SecL^.next:=nil;
+  SecH:=SecL;
+  while vsp^.next<>Nil do
+  Begin
+    if (vsp^.next^.inf=vsp^.inf)and(vsp^.inf <> SecL^.inf) then
+    begin
+      New(SecL^.Next);
+      SecL:=SecL^.Next;
+      SecL^.Next:=Nil;
+      SecL^.Inf:=vsp^.inf;
+    end;
+    vsp:=vsp^.next;
+    printd2;
+  End;
+  Edit2.Text:='Создан список №2';
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+// вывод исходного и обработанного списков
+var
+  f:textfile;
+begin
+  assignfile(f,'output.txt');
+  rewrite(f);
+  SecL:=SecH^.next;
+  List:=Head^.next;
+  writeln(f,'Исходный список:');
+  while List<>Nil do
+  Begin
+    Write(f,List^.Inf,' ');
+    List:=List^.Next;
+  End;
+  writeln(f);
+  writeln(f,'Список без повторений:');
+  while SecL<>Nil do
+  Begin
+    Write(f,SecL^.Inf,' ');
+    SecL:=SecL^.Next;
+  End;
+  closefile(F);
+  Edit3.Text:='Результат в файле "output.txt"';
+end;
+
+end.

@@ -1,0 +1,76 @@
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Buttons;
+
+type
+  TForm1 = class(TForm)
+    BitBtn1: TBitBtn;
+    Label1: TLabel;
+    Edit1: TEdit;
+    Button1: TButton;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Edit2: TEdit;
+    procedure Button1Click(Sender: TObject);
+    procedure Edit2KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit1KeyPress(Sender: TObject; var Key: Char);
+    procedure Edit2Change(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+var
+  x,eps,sum,nfact:real;
+  n,i,j:integer;
+begin
+  x:=strtofloat(Edit1.Text);
+  eps:=strtofloat(Edit2.Text);
+  n:=0;
+  nfact:=1;
+  i:=2;
+  j:=3;
+  While x>eps do begin
+    x:=exp((2*n+1)*ln(x));
+    sum:=sum+x/nfact;
+    inc(n);
+    nfact:=nfact*i*j;
+    i:=i+2;
+    j:=j+2;
+    n:=n+1;
+                 end;
+  Label2.Caption:='Сумма y(x) = '+floattostr(nfact);
+  Label3.Caption:='Число элементов = '+inttostr(n);
+
+end;
+
+procedure TForm1.Edit2KeyPress(Sender: TObject; var Key: Char);
+begin
+if not (Key in ['0'..'9',#8])then begin
+  Key:=#0;
+                                  end;
+end;
+
+procedure TForm1.Edit2KeyPress(Sender: TObject; var Key: Char);
+begin
+if not (Key in ['0'..'9',#8,','])then begin
+  Key:=#0;
+                                      end;
+end;
+
+end.
+

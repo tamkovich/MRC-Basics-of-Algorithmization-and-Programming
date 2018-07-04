@@ -1,0 +1,119 @@
+//Лабораторная работа 10
+//Сложные циклы. Обработка массивов.
+//Создание и использование Unit-ов и библиотек DLL
+//
+//27. Дан массив А, состоящий из n натуральных чисел.
+// Выберите элементы, встречающиеся более одного раза.
+//
+//Подготовил Тамкович Д.И.
+unit Unit1;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, Grids, Buttons;
+
+type
+  TForm1 = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    BitBtn1: TBitBtn;
+    StringGrid1: TStringGrid;
+    Label1: TLabel;
+    Label2: TLabel;
+    OpenDialog1: TOpenDialog;
+    StringGrid2: TStringGrid;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+  tmas=array[0..100] of integer;
+
+var
+  Form1: TForm1;
+  a:tmas;
+  n:integer;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm1.Button1Click(Sender: TObject);
+Var
+    i:integer;
+    f:textfile;
+begin
+  if OpenDialog1.Execute then
+  begin
+    assignfile(f,OpenDialog1.FileName);
+    reset(f);
+    readln(f,n);
+    StringGrid1.ColCount:=n;
+    For i:=1 to StringGrid1.ColCount do
+    begin
+      StringGrid1.Cells[i-1,0]:=inttostr(i);    //нумеруем ячейки таблицы
+      read(f,a[i]);                             //считываем элементы массив
+      StringGrid1.Cells[i-1,1]:=inttostr(a[i]); //заносим элементы в таблицу
+    end;
+  closefile(f);
+  end;
+end;
+
+Procedure qsort(l,r:integer);
+Var
+    tit,i,j,seredina:integer;
+Begin
+  i:=l;
+  j:=r;
+  seredina:=a[(l+r) div 2];
+  repeat
+    While(a[i]<seredina)do
+      i:=i+1;
+    While(a[j]>seredina)do
+      j:=j-1;
+    if (i<=j) then
+    begin
+      tit:=a[i];
+      a[i]:=a[j];
+      a[j]:=tit;
+      i:=i+1;
+      j:=j-1;
+    end;
+  until i>j;
+  if (l < j) then
+                  qsort(l,j);
+  if (i < r) then
+                  qsort(i,r);
+End;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  i,j:integer;
+begin
+  qsort(1,n);      //сортируем масив быстрой сортировкой
+  j:=0;
+  i:=1;
+  StringGrid2.ColCount:=0;
+  while i<n do
+  begin
+    if a[i]=a[i+1] then        //проверка на то, есть ли такой же элемент в массиве
+    begin
+      StringGrid2.ColCount:=StringGrid2.ColCount+1;  //увеличиваем количество столбцов
+      StringGrid2.Cells[j,0]:=inttostr(j+1);         //нумеруем ячейки таблицы
+      StringGrid2.Cells[j,1]:=inttostr(a[i]);        //заносим элементы в таблицу
+      i:=i+1;
+      while a[i]=a[i+1] do
+      begin                    //считаем количество таких же элементов
+        i:=i+1;
+      end;
+      j:=j+1;
+    end;
+    i:=i+1;
+  end;
+end;
+
+end.
